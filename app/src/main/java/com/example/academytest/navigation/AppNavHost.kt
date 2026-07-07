@@ -24,7 +24,6 @@ fun AppNavHost(
         composable("list") {
             ItemsListView(
                 viewModel = viewModel,
-                onAddItem = { /* prossimo step: dialog "Aggiungi oggetto" */ },
                 onItemClick = { id -> navController.navigate("detail/$id") }
             )
         }

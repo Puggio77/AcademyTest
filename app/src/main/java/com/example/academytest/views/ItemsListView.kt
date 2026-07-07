@@ -10,6 +10,9 @@ import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,17 +27,17 @@ import java.util.UUID
 @Composable
 fun ItemsListView(
     viewModel: ItemsListViewModel = viewModel(),
-    onAddItem: () -> Unit,
     onItemClick: (UUID) -> Unit
 ) {
     val items by viewModel.sortedItems.collectAsStateWithLifecycle()
+    var showAddItemDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Oggetti") },
                 actions = {
-                    IconButton(onClick = onAddItem) {
+                    IconButton(onClick = { showAddItemDialog = true }) {
                         Icon(Icons.Filled.Add, contentDescription = "Aggiungi oggetto")
                     }
                 }
@@ -72,6 +75,13 @@ fun ItemsListView(
             }
         }
     }
+
+    if (showAddItemDialog) {
+        AddItemView(
+            onDismiss = { showAddItemDialog = false },
+            onSave = { name -> viewModel.addItem(name) }
+        )
+    }
 }
 
 @Suppress("ViewModelConstructorInComposable")
@@ -79,6 +89,6 @@ fun ItemsListView(
 @Composable
 private fun ItemsListViewPreview() {
     AcademyTestTheme {
-        ItemsListView(viewModel = ItemsListViewModel(), onAddItem = {}, onItemClick = {})
+        ItemsListView(viewModel = ItemsListViewModel(), onItemClick = {})
     }
 }
