@@ -1,11 +1,13 @@
 package com.example.academytest.views
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -59,17 +61,48 @@ fun ItemsListView(
         } else {
             LazyColumn(modifier = Modifier.padding(padding)) {
                 items(items, key = { it.id }) { item ->
-                    ItemRowView(
-                        item = item,
-                        onToggleFavorite = { viewModel.toggleFavorite(item.id) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                viewModel.selectItem(item.id)
-                                onItemClick(item.id)
+                    val dismissState = rememberSwipeToDismissBoxState(
+                        confirmValueChange = { value ->
+                            if (value == SwipeToDismissBoxValue.StartToEnd || value == SwipeToDismissBoxValue.EndToStart) {
+                                viewModel.deleteItem(item.id)
+                                true
+                            } else {
+                                false
                             }
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                        }
                     )
+
+                    SwipeToDismissBox(
+                        state = dismissState,
+                        backgroundContent = {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.errorContainer),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                                    modifier = Modifier.padding(horizontal = 20.dp)
+                                )
+                            }
+                        }
+                    ) {
+                        ItemRowView(
+                            item = item,
+                            onToggleFavorite = { viewModel.toggleFavorite(item.id) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surface)
+                                .clickable {
+                                    viewModel.selectItem(item.id)
+                                    onItemClick(item.id)
+                                }
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
                     HorizontalDivider()
                 }
             }
