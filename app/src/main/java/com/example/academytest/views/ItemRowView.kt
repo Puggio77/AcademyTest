@@ -33,14 +33,7 @@ fun ItemRowView(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-
-        IconButton(onClick = onToggleFavorite) {
-            Icon(
-                imageVector = if (item.isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
-                contentDescription = if (item.isFavorite) "Rimuovi dai preferiti" else "Aggiungi ai preferiti",
-                tint = if (item.isFavorite) Color(0xFFFFC107) else MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        FavoriteButton(isFavorite = item.isFavorite, onToggle = onToggleFavorite)
     }
 }
 
